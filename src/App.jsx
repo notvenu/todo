@@ -3,8 +3,24 @@ import { TodoProvider } from './context'
 import './App.css'
 import TodoForm from './components/TodoForm'
 import TodoItem from './components/TodoItem'
+import { ThemeProvider } from './context/themeContext.js'
+import ThemeBtn from './components/ThemeBtn.jsx'
 
 function App() {
+  const [themeMode, setThemeMode] = useState("dark")
+
+  const lightTheme = () => {
+    setThemeMode("light")
+  }
+  const darkTheme = () => {
+    setThemeMode("dark")
+  }
+
+  useEffect(() => {
+    document.querySelector('html').classList.remove('light', 'dark')
+    document.querySelector('html').classList.add(themeMode)
+  }, [themeMode])
+
   const [todos, setTodos] = useState([])
 
   const addTodo = (todo) => {
@@ -16,7 +32,7 @@ function App() {
   const deleteTodo = (id) => {
     setTodos((prev) => prev.filter((todo) => todo.id !== id))
   }
-  const toggleComplete = (id, completed) => {
+  const toggleComplete = (id) => {
     setTodos((prev) => prev.map((prevTodo) => (prevTodo.id === id ? {...prevTodo, completed: !prevTodo.completed} : prevTodo)))
   } 
 
@@ -35,8 +51,12 @@ function App() {
   return (
     <>
     <TodoProvider value={{todos, addTodo, updateTodo, deleteTodo, toggleComplete}}>
-      <div className="bg-[#172842] min-h-screen py-8 flex justify-center items-center">
-      <div className="w-full max-w-2xl mx-auto shadow-md rounded-lg px-4 py-3 text-black bg-white/70">
+      <ThemeProvider value={{themeMode, lightTheme, darkTheme}}>
+      <div className="bg-[#172842] min-h-screen py-8 flex justify-center items-center flex-col dark:bg-white">
+        <div className='mb-1'>
+          <ThemeBtn/>
+        </div>
+      <div className="w-full max-w-2xl mx-auto shadow-md rounded-lg px-4 py-3 text-black bg-white/70 dark:bg-[#172842] dark:text-white">
         <h1 className="text-2xl font-bold text-center mb-8 mt-2">Manage Your Todos</h1>
           <div className="mb-4">
             <TodoForm/>
@@ -51,6 +71,7 @@ function App() {
           </div>
           </div>
       </div>
+      </ThemeProvider>
     </TodoProvider>
     </>
   )
