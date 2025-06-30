@@ -3,11 +3,18 @@ import { TodoProvider } from './context'
 import './App.css'
 import TodoForm from './components/TodoForm'
 import TodoItem from './components/TodoItem'
-import { ThemeProvider } from './context/themeContext.js'
+import { ThemeProvider, LandingProvider } from './context'
 import ThemeBtn from './components/ThemeBtn.jsx'
 import Footer from './components/Footer.jsx'
+import Landing from './Landing.jsx'
 
 function App() {
+  const [isStarted, setIsStarted] = useState(false);
+  const start = () => {
+    console.log("start() called");
+    setIsStarted(true);
+  };
+
   const [themeMode, setThemeMode] = useState("dark")
 
   const lightTheme = () => {
@@ -58,8 +65,11 @@ function App() {
 
   return (
     <>
-      <TodoProvider value={{ todos, addTodo, updateTodo, deleteTodo, toggleComplete }}>
-        <ThemeProvider value={{ themeMode, lightTheme, darkTheme }}>
+    <ThemeProvider value={{ themeMode, lightTheme, darkTheme }}>
+    <LandingProvider value={{ isStarted, start }}>
+    {!isStarted ? (<Landing />) : null}
+      {isStarted ? (<TodoProvider value={{ todos, addTodo, updateTodo, deleteTodo, toggleComplete }}>
+        
           <div className="bg-white min-h-screen py-6 px-4 flex flex-col items-center dark:bg-[#172842]">
             {/* Theme Button */}
             <div className="mb-4 self-end sm:self-center">
@@ -88,8 +98,10 @@ function App() {
               <Footer/>
             </footer>
           </div>
-        </ThemeProvider>
-      </TodoProvider>
+        
+        </TodoProvider>) : null}
+      </LandingProvider>
+      </ThemeProvider>
     </>
   )
 }
