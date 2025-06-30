@@ -15,7 +15,7 @@ function App() {
     setIsStarted(true);
   };
 
-  const [themeMode, setThemeMode] = useState("dark")
+  const [themeMode, setThemeMode] = useState(() => localStorage.getItem("themeMode") || "dark")
 
   const lightTheme = () => {
     setThemeMode("light")
@@ -54,6 +54,8 @@ function App() {
 
   useEffect(() => {
     const todos = JSON.parse(localStorage.getItem("todos"))
+    const isStarted = localStorage.getItem("isStarted")
+    if(isStarted) setIsStarted(isStarted)
     if (todos && todos.length > 0) {
       setTodos(todos)
     }
@@ -61,7 +63,9 @@ function App() {
 
   useEffect(() => {
     localStorage.setItem("todos", JSON.stringify(todos))
-  }, [todos])
+    localStorage.setItem("themeMode", themeMode)
+    localStorage.setItem("isStarted", isStarted)
+  }, [todos, isStarted, themeMode])
 
   return (
     <>
@@ -94,7 +98,7 @@ function App() {
             </div>
 
             {/* Footer */}
-            <footer className="w-full mt-12 border-t border-gray-200 dark:border-gray-700 pt-6 pb-4">
+            <footer className="w-full mt-12 border-t border-gray-300 dark:border-gray-700 pt-6 pb-4">
               <Footer/>
             </footer>
           </div>
